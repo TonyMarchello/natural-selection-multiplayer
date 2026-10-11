@@ -5,8 +5,11 @@ const MIN_PLAYERS = 2;
 const ARENA_SIZE = 100;
 
 const SPECIES = {
-  deer: { id: 'deer', name: 'Deer', kind: 'prey', maxHealth: 100, energy: 50 },
-  wolf: { id: 'wolf', name: 'Wolf', kind: 'predator', maxHealth: 112, energy: 60 },
+  deer: { id: 'deer', name: 'Deer', kind: 'prey', maxHealth: 100, energy: 50, challengeDamage: 35 },
+  wolf: { id: 'wolf', name: 'Wolf', kind: 'predator', maxHealth: 112, energy: 60, challengeDamage: 40 },
+  fox: { id: 'fox', name: 'Fox', kind: 'predator', maxHealth: 94, energy: 72, challengeDamage: 32 },
+  bear: { id: 'bear', name: 'Bear', kind: 'predator', maxHealth: 136, energy: 38, challengeDamage: 45 },
+  rabbit: { id: 'rabbit', name: 'Rabbit', kind: 'prey', maxHealth: 84, energy: 78, challengeDamage: 28 },
 };
 
 const DISEASES = [
@@ -80,6 +83,7 @@ function makePlayer(playerId, name, slot, requestedSpecies) {
     species: species.id,
     speciesName: species.name,
     speciesKind: species.kind,
+    challengeDamage: species.challengeDamage,
     ready: false,
     role: 'animal',
     state: 'alive',
@@ -226,7 +230,7 @@ function challenge(lobby, player) {
   const target = nearest(lobby, player, (candidate) => candidate.role === 'animal' && distance(player, candidate) <= 14);
   if (!target) return { ok: false, message: 'No rival animal is close enough.' };
   player.energy -= 12;
-  const damage = player.species === 'wolf' ? 40 : 35;
+  const damage = player.challengeDamage || 35;
   const dealt = Math.min(damage, target.health);
   target.health -= damage;
   player.stats.damageDealt += dealt;

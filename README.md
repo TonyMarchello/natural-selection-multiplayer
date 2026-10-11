@@ -2,7 +2,7 @@
 
 Natural Selection is a small authoritative multiplayer survival prototype for the Handshake AI Skills Studio x OpenAI Multiplayer Game Challenge.
 
-The first vertical slice focuses on the defining loop: animals gather resources and compete, defeated animals become disease players, disease players spread infections, and the server resolves animal or extinction victories. Players can choose a deer or wolf, see readable animal and disease artwork in the arena, and move with arrow keys, WASD, or the on-screen pad.
+The first vertical slice focuses on the defining loop: animals gather resources and compete, defeated animals become disease players, disease players spread infections, and the server resolves animal or extinction victories. Players can choose a deer, wolf, fox, bear, or rabbit, see readable animal and disease artwork in the arena, and move with arrow keys, WASD, or the on-screen pad.
 
 ## Run locally
 
@@ -38,7 +38,7 @@ This MVP stores lobbies in memory. A deploy or server restart ends active matche
 - `public/` contains the playable browser client.
 - `docs/` contains the game design and competition checklist.
 
-The arena uses lightweight vector canvas art for deer, wolves, resource nodes, and named diseases including Rabies, Plague, Anthrax, and Smallpox. These are fictional game mechanics and visual labels, not medical guidance.
+The arena uses lightweight vector canvas art for deer, wolves, foxes, bears, rabbits, illustrated food/water/energy nodes, and named diseases including Rabies, Plague, Anthrax, and Smallpox. These are fictional game mechanics and visual labels, not medical guidance.
 
 Server-Sent Events keep the first build simple and reliable: clients submit intent through HTTP, while the server owns movement, damage, infection, mutations, role changes, and victory checks. A WebSocket transport can be introduced later without changing the game rules module.
 

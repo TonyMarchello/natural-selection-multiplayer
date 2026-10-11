@@ -91,3 +91,14 @@ test('chosen species and named disease identity persist through a role transitio
   assert.equal(grazer.disease.name, 'Rabies');
   assert.equal(grazer.speciesName, 'Deer');
 });
+
+test('additional animal species use distinct authored profiles', () => {
+  const lobby = createLobby('BearPlayer', 'bear');
+  const fox = addPlayer(lobby, 'FoxPlayer', 'fox');
+  const rabbit = addPlayer(lobby, 'RabbitPlayer', 'rabbit');
+  assert.equal(getPlayer(lobby, lobby.hostId).speciesName, 'Bear');
+  assert.equal(getPlayer(lobby, fox.playerId).speciesName, 'Fox');
+  assert.equal(getPlayer(lobby, rabbit.playerId).speciesName, 'Rabbit');
+  assert.equal(getPlayer(lobby, lobby.hostId).maxHealth > getPlayer(lobby, rabbit.playerId).maxHealth, true);
+  assert.equal(getPlayer(lobby, fox.playerId).energy > getPlayer(lobby, lobby.hostId).energy, true);
+});

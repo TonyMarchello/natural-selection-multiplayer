@@ -191,6 +191,9 @@ function draw(state) {
     if (mine) { ctx.strokeStyle = '#f4e6a1'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(0, 0, 25, 0, Math.PI * 2); ctx.stroke(); }
     if (player.role === 'illness') drawDisease(ctx, player);
     else if (player.species === 'wolf') drawWolf(ctx, player, mine);
+    else if (player.species === 'fox') drawFox(ctx, player, mine);
+    else if (player.species === 'bear') drawBear(ctx, player, mine);
+    else if (player.species === 'rabbit') drawRabbit(ctx, player, mine);
     else drawDeer(ctx, player, mine);
     ctx.restore();
     ctx.fillStyle = '#eef5e8'; ctx.font = '700 11px system-ui'; ctx.textAlign = 'center';
@@ -203,12 +206,32 @@ function draw(state) {
 
 function drawResource(ctx, resource, x, y) {
   ctx.save(); ctx.translate(x, y);
-  ctx.fillStyle = resource.kind === 'food' ? '#b8d98a' : resource.kind === 'water' ? '#75b7ca' : '#f0c56d';
-  ctx.strokeStyle = 'rgba(255,255,255,.45)'; ctx.lineWidth = 1.5;
-  if (resource.kind === 'water') { ctx.beginPath(); ctx.moveTo(0, -9); ctx.quadraticCurveTo(9, 2, 0, 9); ctx.quadraticCurveTo(-9, 2, 0, -9); ctx.fill(); }
-  else if (resource.kind === 'energy') { ctx.beginPath(); ctx.moveTo(0, -10); ctx.lineTo(8, 0); ctx.lineTo(0, 10); ctx.lineTo(-8, 0); ctx.closePath(); ctx.fill(); }
-  else { [-5, 5].forEach((offset) => { ctx.beginPath(); ctx.arc(offset, 1, 5, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); }); }
+  ctx.fillStyle = 'rgba(8, 16, 12, .42)'; ctx.beginPath(); ctx.ellipse(0, 11, 17, 6, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,.5)'; ctx.lineWidth = 1.5;
+  if (resource.kind === 'water') drawWaterNode(ctx);
+  else if (resource.kind === 'energy') drawEnergyNode(ctx);
+  else drawFoodNode(ctx);
+  ctx.fillStyle = '#eef5e8'; ctx.font = '700 9px system-ui'; ctx.textAlign = 'center';
+  ctx.fillText(resource.kind === 'food' ? 'FOOD' : resource.kind === 'water' ? 'WATER' : 'ENERGY', 0, 25);
   ctx.restore();
+}
+
+function drawFoodNode(ctx) {
+  ctx.fillStyle = '#b8d98a'; ctx.beginPath(); ctx.arc(-6, 0, 7, 0, Math.PI * 2); ctx.arc(6, 0, 7, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = '#85b76c'; ctx.beginPath(); ctx.ellipse(4, -9, 7, 3, -.45, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  ctx.strokeStyle = '#6b4b31'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(0, -5); ctx.lineTo(1, -13); ctx.stroke();
+}
+
+function drawWaterNode(ctx) {
+  ctx.fillStyle = '#367d91'; ctx.beginPath(); ctx.ellipse(0, 2, 17, 10, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  ctx.strokeStyle = '#9fe1e5'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(-9, 0); ctx.quadraticCurveTo(-3, -4, 3, 0); ctx.moveTo(2, 5); ctx.quadraticCurveTo(7, 1, 12, 4); ctx.stroke();
+  ctx.strokeStyle = '#8ec16d'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(-12, 6); ctx.lineTo(-14, -7); ctx.moveTo(-10, 6); ctx.lineTo(-7, -10); ctx.stroke();
+}
+
+function drawEnergyNode(ctx) {
+  ctx.shadowColor = '#f0c56d'; ctx.shadowBlur = 12; ctx.fillStyle = '#f0c56d';
+  ctx.beginPath(); ctx.moveTo(-4, -13); ctx.lineTo(7, -2); ctx.lineTo(1, -1); ctx.lineTo(6, 12); ctx.lineTo(-8, -2); ctx.lineTo(-1, -3); ctx.closePath(); ctx.fill(); ctx.stroke();
+  ctx.shadowBlur = 0;
 }
 
 function drawDeer(ctx, player, mine) {
@@ -231,6 +254,41 @@ function drawWolf(ctx, player, mine) {
   ctx.fillStyle = dark; ctx.beginPath(); ctx.moveTo(14, -14); ctx.lineTo(13, -24); ctx.lineTo(19, -17); ctx.lineTo(24, -22); ctx.lineTo(22, -12); ctx.fill();
   ctx.fillStyle = '#171d20'; ctx.beginPath(); ctx.arc(20, -10, 1.5, 0, Math.PI * 2); ctx.fill();
   ctx.strokeStyle = body; ctx.lineWidth = 5; ctx.beginPath(); ctx.moveTo(-13, -1); ctx.quadraticCurveTo(-23, -10, -22, -18); ctx.stroke();
+}
+
+function drawFox(ctx, player, mine) {
+  const body = mine ? '#f5bd76' : '#d97945'; const dark = '#713c2b';
+  ctx.fillStyle = dark; ctx.strokeStyle = '#291b19'; ctx.lineWidth = 2;
+  [-9, 7].forEach((leg) => { ctx.beginPath(); ctx.roundRect(leg, 3, 4, 13, 2); ctx.fill(); });
+  ctx.fillStyle = body; ctx.beginPath(); ctx.ellipse(0, 1, 15, 8, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(9, -4); ctx.lineTo(16, -16); ctx.lineTo(25, -10); ctx.lineTo(16, 2); ctx.closePath(); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = '#f5ead9'; ctx.beginPath(); ctx.moveTo(17, -11); ctx.lineTo(26, -10); ctx.lineTo(18, -5); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = dark; ctx.beginPath(); ctx.moveTo(14, -15); ctx.lineTo(14, -25); ctx.lineTo(19, -17); ctx.moveTo(20, -14); ctx.lineTo(24, -23); ctx.lineTo(24, -12); ctx.fill();
+  ctx.fillStyle = '#161111'; ctx.beginPath(); ctx.arc(21, -11, 1.5, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = body; ctx.lineWidth = 6; ctx.beginPath(); ctx.moveTo(-12, -1); ctx.quadraticCurveTo(-26, -12, -23, -23); ctx.stroke();
+  ctx.strokeStyle = '#f6eee0'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(-19, -16); ctx.lineTo(-23, -23); ctx.stroke();
+}
+
+function drawBear(ctx, player, mine) {
+  const body = mine ? '#c89a6e' : '#8c6348'; const dark = '#4a3025';
+  ctx.fillStyle = dark; ctx.strokeStyle = '#241914'; ctx.lineWidth = 2;
+  [-10, 7].forEach((leg) => { ctx.beginPath(); ctx.roundRect(leg, 2, 6, 15, 3); ctx.fill(); });
+  ctx.fillStyle = body; ctx.beginPath(); ctx.ellipse(0, 1, 18, 11, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  ctx.beginPath(); ctx.arc(13, -10, 10, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = body; ctx.beginPath(); ctx.arc(8, -19, 5, 0, Math.PI * 2); ctx.arc(20, -19, 5, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = '#d9b89a'; ctx.beginPath(); ctx.ellipse(19, -8, 7, 5, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = '#17100e'; ctx.beginPath(); ctx.arc(16, -12, 1.5, 0, Math.PI * 2); ctx.arc(23, -9, 1.5, 0, Math.PI * 2); ctx.fill();
+}
+
+function drawRabbit(ctx, player, mine) {
+  const body = mine ? '#eee9e2' : '#c7c2c1'; const dark = '#5d5558';
+  ctx.fillStyle = dark; ctx.strokeStyle = '#242025'; ctx.lineWidth = 2;
+  [-8, 7].forEach((leg) => { ctx.beginPath(); ctx.roundRect(leg, 4, 4, 10, 2); ctx.fill(); });
+  ctx.fillStyle = body; ctx.beginPath(); ctx.ellipse(0, 2, 14, 8, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  ctx.beginPath(); ctx.arc(13, -7, 8, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = '#f4b8c5'; ctx.beginPath(); ctx.ellipse(10, -22, 4, 12, -.15, 0, Math.PI * 2); ctx.ellipse(18, -22, 4, 12, .15, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = '#fff6f5'; ctx.beginPath(); ctx.arc(-13, 0, 5, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = '#252025'; ctx.beginPath(); ctx.arc(16, -9, 1.5, 0, Math.PI * 2); ctx.fill();
 }
 
 function drawDisease(ctx, player) {
