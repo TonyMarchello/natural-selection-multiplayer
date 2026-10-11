@@ -1,0 +1,13 @@
+{
+  "name": "natural-selection",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Natural Selection multiplayer evolution roguelike MVP",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test test/game.test.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

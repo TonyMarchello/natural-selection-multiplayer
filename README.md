@@ -1,0 +1,45 @@
+# Natural Selection
+
+Natural Selection is a small authoritative multiplayer survival prototype for the Handshake AI Skills Studio x OpenAI Multiplayer Game Challenge.
+
+The first vertical slice focuses on the defining loop: animals gather resources and compete, defeated animals become illness players, illness players spread infections, and the server resolves animal or extinction victories.
+
+## Run locally
+
+```powershell
+node server.js
+```
+
+Open <http://localhost:3000> in two browser windows. Create a lobby in one window, join with the room code in the other, ready both players, and start the match.
+
+## Test
+
+```powershell
+npm test
+```
+
+## Public deployment
+
+The repository includes a Render Blueprint in `render.yaml`. Render can run the frontend and authoritative multiplayer server as one Node web service, assign a public `onrender.com` URL, and terminate HTTPS at the edge.
+
+Deployment handoff:
+
+1. Put this repository in a GitHub repository and push the project files.
+2. In Render, choose **New > Blueprint**, connect the repository, and apply `render.yaml`.
+3. Wait for the `/healthz` check to pass, then open the generated HTTPS URL.
+4. Test from two devices or networks.
+
+This MVP stores lobbies in memory. A deploy or server restart ends active matches, so persistent match recovery is still a pre-submission limitation.
+
+## Architecture
+
+- `server.js` serves the client and exposes the lobby/game HTTP API plus Server-Sent Events for live state updates.
+- `game.js` contains the authoritative, dependency-free game rules and state transitions.
+- `public/` contains the playable browser client.
+- `docs/` contains the game design and competition checklist.
+
+Server-Sent Events keep the first build simple and reliable: clients submit intent through HTTP, while the server owns movement, damage, infection, mutations, role changes, and victory checks. A WebSocket transport can be introduced later without changing the game rules module.
+
+## Current scope
+
+This is an MVP foundation, not the final competition build. It intentionally uses guest identities, in-memory matches, one arena, a small mutation pool, and a compact action set. Production deployment still needs a hosted server, persistence or recovery strategy, HTTPS, abuse controls, and multi-session QA.
