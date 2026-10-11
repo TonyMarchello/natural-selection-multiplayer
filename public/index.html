@@ -17,12 +17,25 @@
         <div class="menu-card card">
           <label for="name">Your field name</label>
           <input id="name" maxlength="18" placeholder="e.g. Darwin" value="Explorer" />
+          <label for="species">Choose your animal</label>
+          <select id="species">
+            <option value="deer">Deer · resilient grazer</option>
+            <option value="wolf">Wolf · stronger hunter</option>
+          </select>
           <div class="menu-actions">
             <button id="create">Create refuge</button>
             <div class="join-row"><input id="code" maxlength="6" placeholder="ROOM CODE" /><button id="join" class="secondary">Join</button></div>
             <button id="resume" class="secondary hidden">Resume previous session</button>
           </div>
           <p id="menu-status" class="status"></p>
+        </div>
+        <div class="onboarding card">
+          <p class="eyebrow">How to survive</p>
+          <div class="onboarding-grid">
+            <div><strong>1. Move</strong><span>Use arrow keys or WASD to explore.</span></div>
+            <div><strong>2. Adapt</strong><span>Gather food and water, then evolve.</span></div>
+            <div><strong>3. Outlast</strong><span>Animals become diseases when defeated.</span></div>
+          </div>
         </div>
         <p class="microcopy">MVP build • 2-6 players • guest session • server-authoritative rules</p>
       </section>
@@ -31,23 +44,23 @@
         <div class="topbar"><div><p class="eyebrow">Species refuge</p><h2>Prepare the ecosystem</h2></div><div class="room-pill">ROOM <strong id="room-code"></strong></div></div>
         <div class="lobby-grid">
           <div class="card player-card"><div class="section-heading"><h3>Participants</h3><span id="player-count"></span></div><div id="players"></div></div>
-          <div class="card briefing"><p class="eyebrow">Mission brief</p><h3>Cooperate. Compete. Transform.</h3><p>Gather food, water, and energy. Challenge rivals carefully: a defeated animal returns as an illness with a new objective.</p><button id="ready">Mark ready</button><button id="start" class="secondary hidden">Start match</button><p id="lobby-status" class="status"></p></div>
+          <div class="card briefing"><p class="eyebrow">Mission brief</p><h3>Cooperate. Compete. Transform.</h3><p>Gather food, water, and energy. Challenge rivals carefully: a defeated animal returns as a named disease with a new objective.</p><div class="briefing-rules"><span>Deer: durable survivalist</span><span>Wolf: stronger hunter</span><span>Diseases: spread or be neutralized</span></div><button id="ready">Mark ready</button><button id="start" class="secondary hidden">Start match</button><p id="lobby-status" class="status"></p></div>
         </div>
       </section>
 
       <section id="game" class="screen">
         <div class="topbar game-topbar"><div><p class="eyebrow" id="role-label">Animal phase</p><h2 id="objective">Keep the species alive.</h2></div><div class="room-pill">ROOM <strong id="game-room"></strong></div></div>
         <div class="game-layout">
-          <div class="card arena-card"><canvas id="arena" width="720" height="520"></canvas><div class="move-pad"><button data-move="0,-1">▲</button><div><button data-move="-1,0">◀</button><button data-move="1,0">▶</button></div><button data-move="0,1">▼</button></div></div>
+          <div class="card arena-card"><canvas id="arena" width="720" height="520" aria-label="Natural Selection habitat"></canvas><div class="arena-help">Move with <kbd>↑</kbd><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd> or <kbd>WASD</kbd></div><div class="move-pad"><button data-move="0,-1" aria-label="Move up">▲</button><div><button data-move="-1,0" aria-label="Move left">◀</button><button data-move="1,0" aria-label="Move right">▶</button></div><button data-move="0,1" aria-label="Move down">▼</button></div></div>
           <aside class="side-panel">
-            <div class="card stats"><div class="section-heading"><h3 id="player-role">Animal</h3><span id="connection">● online</span></div><div class="meter"><div class="meter-label"><span>Health</span><strong id="health">100</strong></div><div class="bar"><i id="health-bar"></i></div></div><div class="stat-grid"><div><small>Immunity</small><strong id="immunity">0</strong></div><div><small>Virulence</small><strong id="virulence">0</strong></div><div><small>Food</small><strong id="food">0</strong></div><div><small>Water</small><strong id="water">0</strong></div></div></div>
-            <div class="card actions"><div class="section-heading"><h3>Actions</h3><span id="tick"></span></div><div id="animal-actions"><button data-action="gather">Gather nearby</button><button data-action="challenge" class="danger">Challenge rival</button><button data-action="neutralize" class="secondary">Neutralize illness</button><div class="action-row"><button data-action="evolve" data-mutation="shield" class="secondary">Evolve: Shield</button><button data-action="evolve" data-mutation="scavenger" class="secondary">Evolve: Scavenge</button></div></div><div id="illness-actions" class="hidden"><button data-action="infect" class="danger">Transmit infection</button><div class="action-row"><button data-action="mutate" data-mutation="spore" class="secondary">Mutate: Spore</button><button data-action="mutate" data-mutation="adaptive" class="secondary">Mutate: Adaptive</button></div></div><p id="action-status" class="status"></p></div>
+            <div class="card stats"><div class="section-heading"><h3 id="player-role">Animal</h3><span id="connection">● online</span></div><div class="meter"><div class="meter-label"><span>Health</span><strong id="health">100</strong></div><div class="bar"><i id="health-bar"></i></div></div><div class="stat-grid"><div><small>Immunity</small><strong id="immunity">0</strong></div><div><small>Virulence</small><strong id="virulence">0</strong></div><div><small>Energy</small><strong id="energy">0</strong></div><div><small>Food</small><strong id="food">0</strong></div><div><small>Water</small><strong id="water">0</strong></div></div></div>
+            <div class="card actions"><div class="section-heading"><h3>Actions</h3><span id="tick"></span></div><div id="targeting" class="targeting">Scanning for nearby targets…</div><div id="animal-actions"><button data-action="gather">Gather nearby</button><button data-action="challenge" class="danger">Challenge rival</button><button data-action="neutralize" class="secondary">Neutralize illness</button><div class="action-row"><button data-action="evolve" data-mutation="shield" class="secondary">Evolve: Thick Hide</button><button data-action="evolve" data-mutation="scavenger" class="secondary">Evolve: Scavenger</button></div></div><div id="illness-actions" class="hidden"><button data-action="infect" class="danger">Transmit infection</button><div class="action-row"><button data-action="mutate" data-mutation="spore" class="secondary">Mutate: Spore</button><button data-action="mutate" data-mutation="adaptive" class="secondary">Mutate: Adaptive</button></div></div><p id="action-status" class="status"></p></div>
             <div class="card feed"><div class="section-heading"><h3>Field notes</h3></div><div id="events"></div></div>
           </aside>
         </div>
       </section>
 
-      <section id="ended" class="screen"><div class="card end-card"><p class="eyebrow">Match complete</p><h2 id="winner"></h2><p id="summary"></p><button id="restart">Return to refuge</button><p id="end-status" class="status"></p></div></section>
+      <section id="ended" class="screen"><div class="card end-card"><p class="eyebrow">Match complete</p><h2 id="winner"></h2><p id="summary"></p><div id="summary-stats" class="summary-stats"></div><div id="final-roster" class="final-roster"></div><button id="restart">Return to refuge</button><p id="end-status" class="status"></p></div></section>
     </main>
     <script src="/public/client.js"></script>
   </body>

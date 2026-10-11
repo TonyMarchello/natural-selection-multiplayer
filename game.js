@@ -4,6 +4,18 @@ const MAX_PLAYERS = 6;
 const MIN_PLAYERS = 2;
 const ARENA_SIZE = 100;
 
+const SPECIES = {
+  deer: { id: 'deer', name: 'Deer', kind: 'prey', maxHealth: 100, energy: 50 },
+  wolf: { id: 'wolf', name: 'Wolf', kind: 'predator', maxHealth: 112, energy: 60 },
+};
+
+const DISEASES = [
+  { id: 'rabies', name: 'Rabies', virulence: 20, damage: 30, color: '#d7a8ef' },
+  { id: 'plague', name: 'Plague', virulence: 24, damage: 32, color: '#b884d9' },
+  { id: 'anthrax', name: 'Anthrax', virulence: 28, damage: 34, color: '#f09b83' },
+  { id: 'smallpox', name: 'Smallpox', virulence: 22, damage: 31, color: '#e6c36a' },
+];
+
 const RESOURCE_TEMPLATES = [
   { id: 'food-1', kind: 'food', x: 18, y: 22, amount: 20 },
   { id: 'food-2', kind: 'food', x: 78, y: 26, amount: 20 },
@@ -27,7 +39,7 @@ function cleanName(name) {
   return value || 'Explorer';
 }
 
-function createLobby(hostName) {
+function createLobby(hostName, species) {
   const hostId = id();
   const lobby = {
     code: roomCode(),
@@ -40,13 +52,19 @@ function createLobby(hostName) {
     resources: RESOURCE_TEMPLATES.map((resource) => ({ ...resource, available: true })),
     events: [],
     clients: new Set(),
+    nextDiseaseIndex: 0,
   };
-  lobby.players.set(hostId, makePlayer(hostId, hostName, 1));
+  lobby.players.set(hostId, makePlayer(hostId, hostName, 1, species));
   announce(lobby, `${cleanName(hostName)} created a new species refuge.`);
   return lobby;
 }
 
-function makePlayer(playerId, name, slot) {
+function normalizeSpecies(value, slot = 1) {
+  if (value && SPECIES[value]) return value;
+  return slot % 2 === 0 ? 'wolf' : 'deer';
+}
+
+function makePlayer(playerId, name, slot, requestedSpecies) {
   const starts = [
     { x: 40, y: 42 },
     { x: 60, y: 42 },
@@ -55,31 +73,46 @@ function makePlayer(playerId, name, slot) {
     { x: 32, y: 52 },
     { x: 68, y: 52 },
   ];
+  const species = SPECIES[normalizeSpecies(requestedSpecies, slot)];
   return {
     id: playerId,
     name: cleanName(name),
+    species: species.id,
+    speciesName: species.name,
+    speciesKind: species.kind,
     ready: false,
     role: 'animal',
     state: 'alive',
     x: starts[(slot - 1) % starts.length].x,
     y: starts[(slot - 1) % starts.length].y,
-    health: 100,
-    maxHealth: 100,
+    health: species.maxHealth,
+    maxHealth: species.maxHealth,
     immunity: 0,
     virulence: 0,
     food: 0,
     water: 0,
-    energy: 50,
+    energy: species.energy,
     mutations: [],
+    disease: null,
+    facing: { x: 1, y: 0 },
+    stats: {
+      moves: 0,
+      resources: 0,
+      damageDealt: 0,
+      damageTaken: 0,
+      infections: 0,
+      neutralizations: 0,
+      mutations: 0,
+    },
     connected: false,
   };
 }
 
-function addPlayer(lobby, name) {
+function addPlayer(lobby, name, species) {
   if (lobby.phase !== 'lobby') return { ok: false, message: 'This match has already started.' };
   if (lobby.players.size >= MAX_PLAYERS) return { ok: false, message: 'This lobby is full.' };
   const playerId = id();
-  lobby.players.set(playerId, makePlayer(playerId, name, lobby.players.size + 1));
+  lobby.players.set(playerId, makePlayer(playerId, name, lobby.players.size + 1, species));
   announce(lobby, `${cleanName(name)} joined the refuge.`);
   return { ok: true, playerId };
 }
@@ -122,18 +155,21 @@ function startGame(lobby, playerId) {
 }
 
 function transformToIllness(lobby, animal) {
+  const disease = DISEASES[lobby.nextDiseaseIndex % DISEASES.length];
+  lobby.nextDiseaseIndex += 1;
   animal.role = 'illness';
   animal.state = 'alive';
   animal.health = 100;
   animal.maxHealth = 100;
   animal.immunity = 0;
-  animal.virulence = 20;
+  animal.virulence = disease.virulence;
   animal.food = 0;
   animal.water = 0;
   animal.energy = 50;
   animal.mutations = [];
+  animal.disease = { id: disease.id, name: disease.name, color: disease.color, damage: disease.damage };
   lobby.hadIllness = true;
-  announce(lobby, `${animal.name}'s animal fell. They return as an illness.`);
+  announce(lobby, `${animal.name}'s ${animal.speciesName.toLowerCase()} fell to ${disease.name}. They return as an active disease.`);
 }
 
 function checkVictory(lobby) {
@@ -167,6 +203,8 @@ function move(lobby, player, dx, dy) {
   }
   player.x = Math.max(5, Math.min(95, player.x + x * 4));
   player.y = Math.max(5, Math.min(95, player.y + y * 4));
+  player.facing = { x, y };
+  player.stats.moves += 1;
   if (player.role === 'animal') player.energy -= 2;
   return { ok: true };
 }
@@ -177,6 +215,7 @@ function gather(lobby, player) {
   if (!resource) return { ok: false, message: 'Move closer to a resource node.' };
   resource.available = false;
   player[resource.kind] += resource.amount;
+  player.stats.resources += resource.amount;
   announce(lobby, `${player.name} gathered ${resource.amount} ${resource.kind}.`);
   return { ok: true };
 }
@@ -187,8 +226,12 @@ function challenge(lobby, player) {
   const target = nearest(lobby, player, (candidate) => candidate.role === 'animal' && distance(player, candidate) <= 14);
   if (!target) return { ok: false, message: 'No rival animal is close enough.' };
   player.energy -= 12;
-  target.health -= 35;
-  announce(lobby, `${player.name} challenged ${target.name} for 35 damage.`);
+  const damage = player.species === 'wolf' ? 40 : 35;
+  const dealt = Math.min(damage, target.health);
+  target.health -= damage;
+  player.stats.damageDealt += dealt;
+  target.stats.damageTaken += dealt;
+  announce(lobby, `${player.name} (${player.speciesName}) challenged ${target.name} for ${damage} damage.`);
   if (target.health <= 0) transformToIllness(lobby, target);
   checkVictory(lobby);
   return { ok: true };
@@ -205,9 +248,15 @@ function infect(lobby, player) {
     target.immunity += 5;
     announce(lobby, `${target.name} resisted ${player.name}'s infection and learned from it.`);
   } else {
-    target.health -= 30;
+    const disease = player.disease || DISEASES[0];
+    const damage = disease.damage || 30;
+    const dealt = Math.min(damage, target.health);
+    target.health -= damage;
     target.immunity += 3;
-    announce(lobby, `${player.name} infected ${target.name} for 30 damage.`);
+    player.stats.infections += 1;
+    player.stats.damageDealt += dealt;
+    target.stats.damageTaken += dealt;
+    announce(lobby, `${player.name}'s ${disease.name} infected ${target.name} for ${damage} damage.`);
     if (target.health <= 0) transformToIllness(lobby, target);
   }
   checkVictory(lobby);
@@ -225,6 +274,7 @@ function evolve(lobby, player, mutation) {
   player.mutations.push(mutation);
   if (mutation === 'shield') player.immunity += 12;
   if (mutation === 'scavenger') player.energy += 20;
+  player.stats.mutations += 1;
   announce(lobby, `${player.name} evolved ${mutation === 'shield' ? 'Thick Hide' : 'Scavenger Instinct'}.`);
   return { ok: true };
 }
@@ -239,6 +289,7 @@ function mutate(lobby, player, mutation) {
   player.mutations.push(mutation);
   if (mutation === 'spore') player.virulence += 18;
   if (mutation === 'adaptive') player.virulence += 8;
+  player.stats.mutations += 1;
   announce(lobby, `${player.name} mutated their pathogen with ${mutation}.`);
   return { ok: true };
 }
@@ -251,6 +302,7 @@ function neutralize(lobby, player) {
     return { ok: false, message: `Your immunity (${player.immunity}) is below pathogen strength (${target.virulence}).` };
   }
   target.state = 'neutralized';
+  player.stats.neutralizations += 1;
   announce(lobby, `${player.name} neutralized ${target.name}'s illness.`);
   checkVictory(lobby);
   return { ok: true };
@@ -261,15 +313,18 @@ function applyAction(lobby, playerId, action) {
   if (action.type === 'start') return startGame(lobby, playerId);
   if (action.type === 'restart') {
     if (playerId !== lobby.hostId || lobby.phase !== 'ended') return { ok: false, message: 'Only the host can restart an ended match.' };
-    const names = [...lobby.players.values()].map((player) => player.name);
+    const players = [...lobby.players.values()];
+    const names = players.map((player) => player.name);
+    const species = players.map((player) => player.species);
     const ids = [...lobby.players.keys()];
     lobby.phase = 'lobby';
     lobby.winner = null;
     lobby.hadIllness = false;
     lobby.tick = 0;
+    lobby.nextDiseaseIndex = 0;
     lobby.resources = RESOURCE_TEMPLATES.map((resource) => ({ ...resource, available: true }));
     lobby.events = [];
-    ids.forEach((playerId, index) => lobby.players.set(playerId, makePlayer(playerId, names[index], index + 1)));
+    ids.forEach((playerId, index) => lobby.players.set(playerId, makePlayer(playerId, names[index], index + 1, species[index])));
     announce(lobby, 'The refuge is ready for a rematch.');
     return { ok: true };
   }
@@ -300,7 +355,10 @@ function tick(lobby) {
       player.health = Math.min(player.maxHealth, player.health + 2);
     }
     if (player.role === 'animal' && player.water > 0) player.water -= 1;
-    if (player.role === 'animal' && player.water === 0) player.health -= 1;
+    if (player.role === 'animal' && player.water === 0) {
+      player.health -= 1;
+      player.stats.damageTaken += 1;
+    }
     if (player.role === 'animal' && player.health <= 0) newlyIllness.push(player);
   }
   newlyIllness.forEach((player) => transformToIllness(lobby, player));

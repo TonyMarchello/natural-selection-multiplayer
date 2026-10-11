@@ -72,3 +72,22 @@ test('starving animals transition instead of leaving a dead active state', () =>
   assert.equal(rival.state, 'alive');
   assert.equal(lobby.hadIllness, true);
 });
+
+test('chosen species and named disease identity persist through a role transition', () => {
+  const lobby = createLobby('Hunter', 'wolf');
+  const joined = addPlayer(lobby, 'Grazer', 'deer');
+  applyAction(lobby, lobby.hostId, { type: 'ready' });
+  applyAction(lobby, joined.playerId, { type: 'ready' });
+  applyAction(lobby, lobby.hostId, { type: 'start' });
+  const hunter = getPlayer(lobby, lobby.hostId);
+  const grazer = getPlayer(lobby, joined.playerId);
+  assert.equal(hunter.species, 'wolf');
+  assert.equal(grazer.species, 'deer');
+  grazer.x = hunter.x + 1;
+  grazer.y = hunter.y;
+  grazer.health = 1;
+  assert.equal(applyAction(lobby, lobby.hostId, { type: 'challenge' }).ok, true);
+  assert.equal(grazer.role, 'illness');
+  assert.equal(grazer.disease.name, 'Rabies');
+  assert.equal(grazer.speciesName, 'Deer');
+});

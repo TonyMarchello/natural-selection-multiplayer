@@ -2,7 +2,7 @@
 
 Natural Selection is a small authoritative multiplayer survival prototype for the Handshake AI Skills Studio x OpenAI Multiplayer Game Challenge.
 
-The first vertical slice focuses on the defining loop: animals gather resources and compete, defeated animals become illness players, illness players spread infections, and the server resolves animal or extinction victories.
+The first vertical slice focuses on the defining loop: animals gather resources and compete, defeated animals become disease players, disease players spread infections, and the server resolves animal or extinction victories. Players can choose a deer or wolf, see readable animal and disease artwork in the arena, and move with arrow keys, WASD, or the on-screen pad.
 
 ## Run locally
 
@@ -10,7 +10,7 @@ The first vertical slice focuses on the defining loop: animals gather resources 
 node server.js
 ```
 
-Open <http://localhost:3000> in two browser windows. Create a lobby in one window, join with the room code in the other, ready both players, and start the match.
+Open <http://localhost:3000> in two browser windows. Choose a deer or wolf, create a lobby in one window, join with the room code in the other, ready both players, and start the match. Use arrow keys or WASD to move.
 
 ## Test
 
@@ -37,6 +37,8 @@ This MVP stores lobbies in memory. A deploy or server restart ends active matche
 - `game.js` contains the authoritative, dependency-free game rules and state transitions.
 - `public/` contains the playable browser client.
 - `docs/` contains the game design and competition checklist.
+
+The arena uses lightweight vector canvas art for deer, wolves, resource nodes, and named diseases including Rabies, Plague, Anthrax, and Smallpox. These are fictional game mechanics and visual labels, not medical guidance.
 
 Server-Sent Events keep the first build simple and reliable: clients submit intent through HTTP, while the server owns movement, damage, infection, mutations, role changes, and victory checks. A WebSocket transport can be introduced later without changing the game rules module.
 

@@ -117,8 +117,8 @@ const server = http.createServer(async (req, res) => {
   if (req.method === 'POST' && url.pathname === '/api/lobbies') {
     try {
       const input = await body(req);
-      let lobby = createLobby(input.name);
-      while (lobbies.has(lobby.code)) lobby = createLobby(input.name);
+      let lobby = createLobby(input.name, input.species);
+      while (lobbies.has(lobby.code)) lobby = createLobby(input.name, input.species);
       lobbies.set(lobby.code, lobby);
       return json(res, 201, { code: lobby.code, playerId: lobby.hostId });
     } catch (error) {
@@ -131,7 +131,8 @@ const server = http.createServer(async (req, res) => {
     const lobby = lobbies.get(code);
     if (!lobby) return json(res, 404, { error: 'Lobby not found.' });
     try {
-      const result = addPlayer(lobby, (await body(req)).name);
+      const input = await body(req);
+      const result = addPlayer(lobby, input.name, input.species);
       if (!result.ok) return json(res, 409, { error: result.message });
       broadcast(lobby);
       return json(res, 201, { code, playerId: result.playerId });
