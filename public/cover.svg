@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Natural Selection — multiplayer evolution roguelike</title>
+  <desc id="desc">A stylized forest habitat with a deer, wolf, fox, bear, rabbit, and a glowing disease organism.</desc>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#102b3b"/>
+      <stop offset="1" stop-color="#193d42"/>
+    </linearGradient>
+    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#356452"/>
+      <stop offset="1" stop-color="#132b2b"/>
+    </linearGradient>
+    <radialGradient id="glow">
+      <stop offset="0" stop-color="#ffdb85" stop-opacity=".9"/>
+      <stop offset="1" stop-color="#ffdb85" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="softGlow"><feGaussianBlur stdDeviation="12"/></filter>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#sky)"/>
+  <circle cx="1290" cy="190" r="150" fill="#d9f0c5" opacity=".14"/>
+  <path d="M0 560 Q190 470 380 555 T760 530 T1160 550 T1600 500 V900 H0Z" fill="url(#ground)"/>
+  <g fill="#0b2427" opacity=".72">
+    <path d="M100 540V190h38v350l105-176 28 18-113 190z"/>
+    <path d="M1410 535V130h42v405l-118-190 26-18z"/>
+    <path d="M310 545V270h32v275l-80-125 22-14z"/>
+  </g>
+  <g fill="none" stroke="#b7d58f" stroke-width="7" opacity=".55">
+    <path d="M70 790q20-120 40 0m-6 0q26-150 53 0m1270 0q20-125 42 0m-8 0q28-165 55 0"/>
+  </g>
+
+  <g transform="translate(230 535)" fill="#dca66a" stroke="#1b2927" stroke-width="9" stroke-linejoin="round">
+    <path d="M30 145L45 50 130 20 215 48 245 108 215 150 125 158Z"/>
+    <path d="M195 65l58-48 42 30-33 45-54 17z"/>
+    <path d="M65 145l-10 96m70-92-4 96m75-94 8 93m48-92 15 82" fill="none"/>
+    <path d="M250 33q-7-61-34-78m42 79q16-57 51-74m-47 69q-24-28-48-30m49 18q25-27 51-27" fill="none"/>
+    <circle cx="270" cy="43" r="6" fill="#172424" stroke="none"/>
+  </g>
+
+  <g transform="translate(570 545)" fill="#8395a5" stroke="#172424" stroke-width="9" stroke-linejoin="round">
+    <path d="M20 140L48 67 145 35 220 60 274 117 240 155 126 160Z"/>
+    <path d="M205 70l68-52 54 22-38 68-66 12z"/>
+    <path d="M49 139l-8 96m83-93-4 99m72-102 10 96m49-98 17 79" fill="none"/>
+    <path d="M255 23l-9-66 48 45 53-34-25 66"/>
+    <circle cx="282" cy="49" r="6" fill="#172424" stroke="none"/>
+  </g>
+
+  <g transform="translate(905 585)" fill="#bd6e4d" stroke="#172424" stroke-width="9" stroke-linejoin="round">
+    <path d="M18 110L50 54 135 35 212 67 232 116 195 145 100 148Z"/>
+    <path d="M190 69l55-48 42 21-32 62-53 16z"/>
+    <path d="M51 134l-10 78m73-76-4 76m72-78 10 73m42-77 12 64" fill="none"/>
+    <path d="M240 23l-16-58 51 38 49-25-25 61"/>
+    <circle cx="263" cy="50" r="6" fill="#172424" stroke="none"/>
+  </g>
+
+  <g transform="translate(1180 525)" fill="#6f5147" stroke="#172424" stroke-width="9" stroke-linejoin="round">
+    <path d="M10 165L35 57 125 25 222 50 260 127 222 175 112 180Z"/>
+    <path d="M207 69l51-51 59 20-15 72-75 20z"/>
+    <path d="M46 166l-15 100m85-98-7 100m78-104 13 98m58-105 24 90" fill="none"/>
+    <circle cx="270" cy="48" r="7" fill="#172424" stroke="none"/>
+    <circle cx="66" cy="43" r="28"/>
+  </g>
+
+  <g transform="translate(1435 685)" fill="#eee0c3" stroke="#172424" stroke-width="8" stroke-linejoin="round">
+    <path d="M8 92l28-62 64-18 55 28 14 54-37 30-71 3Z"/>
+    <path d="M39 22L25-47 68 0m22-4 24-62 17 74"/>
+    <path d="M38 100l-8 55m62-54 5 54" fill="none"/>
+    <circle cx="111" cy="39" r="5" fill="#172424" stroke="none"/>
+  </g>
+
+  <g transform="translate(835 160)">
+    <circle cx="95" cy="95" r="135" fill="url(#glow)" filter="url(#softGlow)"/>
+    <circle cx="95" cy="95" r="62" fill="#d45c94" stroke="#ffd47d" stroke-width="8"/>
+    <g fill="none" stroke="#542f63" stroke-width="8">
+      <path d="M95 33v-35m0 194v-35M33 95H-2m194 0h-35M51 51 26 26m138 138-25-25m0-88 25-25M51 139l-25 25"/>
+    </g>
+    <circle cx="75" cy="80" r="10" fill="#fff2bf"/><circle cx="117" cy="112" r="8" fill="#fff2bf"/>
+    <text x="95" y="245" text-anchor="middle" fill="#ffd47d" font-family="Arial, sans-serif" font-size="22" font-weight="700" letter-spacing="4">ADAPT OR VANISH</text>
+  </g>
+
+  <g fill="#f6f0d7" font-family="Arial, sans-serif">
+    <text x="90" y="110" font-size="28" font-weight="700" letter-spacing="8" fill="#b7d58f">A MULTIPLAYER EVOLUTION ROGUELIKE</text>
+    <text x="84" y="220" font-size="104" font-weight="900" letter-spacing="2">NATURAL</text>
+    <text x="84" y="322" font-size="104" font-weight="900" letter-spacing="2" fill="#ffcf73">SELECTION</text>
+    <text x="90" y="390" font-size="28" fill="#d9e5d0">Survive the habitat. Evolve your defenses. Outlast extinction.</text>
+  </g>
+  <path d="M90 430h450" stroke="#ffcf73" stroke-width="8" stroke-linecap="round"/>
+</svg>

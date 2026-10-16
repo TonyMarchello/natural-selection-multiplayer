@@ -159,7 +159,7 @@ function renderTargeting(state) {
   if (!you) return;
   const targetRole = you.role === 'illness' ? 'animal' : 'animal';
   const range = you.role === 'illness' ? 16 : 14;
-  const candidates = state.players.filter((player) => player.id !== you.id && player.state === 'alive' && player.role === targetRole && (you.role === 'illness' || player.role === 'illness'));
+  const candidates = state.players.filter((player) => player.id !== you.id && player.state === 'alive' && (you.role === 'illness' ? player.role === targetRole : true));
   const target = candidates.sort((a, b) => distance(you, a) - distance(you, b))[0];
   if (!target) {
     $('targeting').textContent = you.role === 'illness' ? 'Targeting: no animal in range.' : 'Targeting: no nearby rival or disease.';
