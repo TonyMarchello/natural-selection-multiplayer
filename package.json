@@ -4,8 +4,12 @@
   "private": true,
   "description": "Natural Selection multiplayer evolution roguelike MVP",
   "scripts": {
+    "build:netlify": "node -e \"console.log('Netlify static bundle ready')\"",
     "start": "node server.js",
     "test": "node --test test/game.test.js"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^10.2.0"
   },
   "engines": {
     "node": ">=20"

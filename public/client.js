@@ -1,5 +1,7 @@
 const SESSION_KEY = 'natural-selection-session-v1';
-const session = { code: null, playerId: null, stream: null, state: null };
+const NETLIFY_DEPLOY = window.NETLIFY_DEPLOY === true;
+const NETLIFY_FUNCTION = '/.netlify/functions/game';
+const session = { code: null, playerId: null, stream: null, poll: null, state: null };
 const $ = (id) => document.getElementById(id);
 
 function saveSession() {
@@ -18,6 +20,7 @@ function savedSession() {
 }
 
 function forgetSession() {
+  if (session.poll) clearInterval(session.poll);
   sessionStorage.removeItem(SESSION_KEY);
   localStorage.removeItem(SESSION_KEY);
   session.code = null;
@@ -40,7 +43,26 @@ async function request(url, options = {}) {
   const timeout = setTimeout(() => controller.abort(), 6000);
   let response;
   try {
-    response = await fetch(url, { headers: { 'content-type': 'application/json' }, signal: controller.signal, ...options });
+    const headers = { 'content-type': 'application/json', ...(options.headers || {}) };
+    if (!NETLIFY_DEPLOY) {
+      response = await fetch(url, { ...options, headers, signal: controller.signal });
+    } else {
+      const parsed = new URL(url, window.location.origin);
+      const method = options.method || 'GET';
+      if (method === 'GET') {
+        response = await fetch(`${NETLIFY_FUNCTION}${parsed.search}`, { ...options, headers, signal: controller.signal });
+      } else {
+        const payload = options.body ? JSON.parse(options.body) : {};
+        const match = parsed.pathname.match(/^\/api\/lobbies\/([^/]+)/i);
+        const operation = parsed.pathname.endsWith('/join') ? 'join' : parsed.pathname.endsWith('/action') ? 'action' : 'create';
+        response = await fetch(NETLIFY_FUNCTION, {
+          ...options,
+          headers,
+          signal: controller.signal,
+          body: JSON.stringify({ ...payload, operation, code: match?.[1] || payload.code }),
+        });
+      }
+    }
   } finally {
     clearTimeout(timeout);
   }
@@ -54,6 +76,26 @@ function connect(code, playerId) {
   session.playerId = playerId;
   saveSession();
   if (session.stream) session.stream.close();
+  if (session.poll) clearInterval(session.poll);
+  if (NETLIFY_DEPLOY) {
+    const poll = async () => {
+      try {
+        update(await request(`/api/lobbies/${code}?playerId=${encodeURIComponent(playerId)}`));
+        if ($('connection')) {
+          $('connection').textContent = '● online';
+          $('connection').style.color = '#6db889';
+        }
+      } catch {
+        if ($('connection')) {
+          $('connection').textContent = '● reconnecting';
+          $('connection').style.color = '#e88967';
+        }
+      }
+    };
+    poll();
+    session.poll = setInterval(poll, 1500);
+    return;
+  }
   session.stream = new EventSource(`/api/lobbies/${code}/stream?playerId=${encodeURIComponent(playerId)}`);
   session.stream.onmessage = (event) => update(JSON.parse(event.data));
   session.stream.onopen = () => {

@@ -33,6 +33,10 @@ Deployment handoff:
 
 This MVP stores lobbies in memory. A deploy or server restart ends active matches, so persistent match recovery is still a pre-submission limitation.
 
+## Netlify package
+
+`netlify-ready-game.zip` is a drag-and-drop package for Netlify. It keeps the same game rules, stores lobby snapshots in a strongly consistent Netlify Blobs store, and polls the function for state updates because serverless functions cannot hold the Render SSE connection open. The package includes `netlify.toml`, `netlify/functions/game.ts`, `package.json`, `package-lock.json`, and the static frontend; it does not include `node_modules`.
+
 ## Architecture
 
 - `server.js` serves the client and exposes the lobby/game HTTP API plus Server-Sent Events for live state updates.
