@@ -10,6 +10,8 @@
 - Host and guest can join the same lobby.
 - Lobby readiness gates match start.
 - Separate browser sessions reach the live match.
+- Live run completed: keyboard movement, combat, animal-to-disease transition, pathogen mutation, infection, synchronized extinction result, and host-led rematch all passed.
+- The run also confirmed the rematch restores the original Wolf and Rabbit identities.
 - The current deployment should be retested after every Render deploy because free instances can sleep and the service keeps lobbies in memory.
 
 ## Required physical-device pass

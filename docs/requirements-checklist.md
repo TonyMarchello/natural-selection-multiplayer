@@ -5,9 +5,9 @@
 - [ ] Confirm personal eligibility: age/majority, eligible-country residency, presence in an eligible country at entry, and active Handshake account.
 - [ ] Submit through Handshake's `Create a Multiplayer Game` mission.
 - [ ] Prepare a project title.
-- [ ] Prepare a project cover image.
-- [ ] Prepare a project description.
-- [ ] Verify and submit a working public project URL.
+- [x] Prepare a project cover image (`public/cover.svg`).
+- [x] Prepare a project description (README and repository metadata).
+- [x] Verify and submit a working public project URL: https://natural-selection.onrender.com/
 - [ ] Submit by October 30, 2026 at 11:59 PM PT.
 - [ ] Do not use mass/script-generated entries or automated submissions.
 
@@ -31,5 +31,9 @@
 - [x] Invalid action rejection.
 - [x] Browser-session synchronization QA: two browser sessions created/joined a room, readied, started, and both received the same live gather event.
 - [x] Reconnection QA locally: a refreshed active-match tab recovered the same player, role, room, and live event history without creating a duplicate.
-- [ ] Deployment and HTTPS configuration.
-- [ ] Final cover image, description, demo script, and submission review.
+- [x] Deployment and HTTPS configuration.
+- [x] Final cover image, description, and demo script prepared.
+- [x] Full two-browser smoke run: lobby, synchronized start, keyboard movement, combat, animal-to-disease transition, mutation, infection, synchronized extinction result, and rematch.
+- [ ] Test from two separate physical devices or networks.
+- [ ] Record or capture the final demonstration.
+- [ ] Confirm personal eligibility and submit through Handshake.
