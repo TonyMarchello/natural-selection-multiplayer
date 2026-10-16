@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { createLobby, addPlayer, applyAction, getPlayer, publicState, tick } = require('../game');
+const { MAX_PLAYERS, createLobby, addPlayer, applyAction, getPlayer, publicState, tick } = require('../game');
 
 function readyLobby() {
   const lobby = createLobby('Host');
@@ -19,6 +19,16 @@ test('requires two ready players before starting', () => {
   applyAction(lobby, joined.playerId, { type: 'ready' });
   assert.equal(applyAction(lobby, lobby.hostId, { type: 'start' }).ok, true);
   assert.equal(lobby.phase, 'playing');
+});
+
+test('supports eight players and rejects a ninth player', () => {
+  const lobby = createLobby('Host');
+  for (let index = 2; index <= MAX_PLAYERS; index += 1) {
+    assert.equal(addPlayer(lobby, `Player ${index}`).ok, true);
+  }
+  assert.equal(lobby.players.size, 8);
+  assert.equal(new Set([...lobby.players.values()].map((player) => `${player.x},${player.y}`)).size, 8);
+  assert.equal(addPlayer(lobby, 'Player 9').ok, false);
 });
 
 test('defeated animal transitions to illness', () => {

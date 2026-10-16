@@ -8,7 +8,7 @@ Every victory can create a new enemy. Players begin as animals of one species. W
 
 | Area | MVP rule |
 | --- | --- |
-| Players | 2-6 guests; the host needs at least two ready players to start |
+| Players | 2-8 guests; the host needs at least two ready players to start |
 | Animal species | Players choose Deer, Wolf, Fox, Bear, or Rabbit; each has a readable health, energy, and challenge profile |
 | Arena | One 100 x 100 top-down arena with food, water, and energy nodes |
 | Animal objective | Stay alive, gather resources, challenge rivals, evolve immunity, and neutralize illnesses |

@@ -23,7 +23,7 @@
 ## MVP engineering verification
 
 - [x] Server-owned player state and victory checks.
-- [x] Lobby capacity and readiness validation.
+- [x] Lobby capacity up to eight players and readiness validation.
 - [x] Animal-to-illness transition.
 - [x] Infection success and immunity rejection.
 - [x] Animal and illness mutation purchases.

@@ -144,7 +144,7 @@ function update(state) {
 function renderLobby(state) {
   show('lobby');
   $('room-code').textContent = state.code;
-  $('player-count').textContent = `${state.players.length}/6`;
+  $('player-count').textContent = `${state.players.length}/8`;
   $('players').innerHTML = state.players.map((player) => `<div class="player-row"><span class="player-name">${escapeHtml(player.name)}${player.id === state.hostId ? ' <small>HOST</small>' : ''}</span><span class="tag ${player.ready ? '' : 'waiting'}">${player.ready ? 'READY' : 'WAITING'}</span></div>`).join('');
   $('ready').textContent = state.you?.ready ? 'Stand down' : 'Mark ready';
   $('start').classList.toggle('hidden', state.you?.id !== state.hostId);

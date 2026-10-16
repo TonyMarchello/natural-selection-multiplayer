@@ -1,6 +1,6 @@
 const crypto = require('node:crypto');
 
-const MAX_PLAYERS = 6;
+const MAX_PLAYERS = 8;
 const MIN_PLAYERS = 2;
 const ARENA_SIZE = 100;
 
@@ -75,6 +75,8 @@ function makePlayer(playerId, name, slot, requestedSpecies) {
     { x: 58, y: 60 },
     { x: 32, y: 52 },
     { x: 68, y: 52 },
+    { x: 28, y: 42 },
+    { x: 72, y: 42 },
   ];
   const species = SPECIES[normalizeSpecies(requestedSpecies, slot)];
   return {

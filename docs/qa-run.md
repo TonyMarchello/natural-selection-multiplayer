@@ -8,6 +8,7 @@
 ## Browser-session smoke test
 
 - Host and guest can join the same lobby.
+- Lobby capacity supports up to eight players; the ninth join attempt is rejected.
 - Lobby readiness gates match start.
 - Separate browser sessions reach the live match.
 - Live run completed: keyboard movement, combat, animal-to-disease transition, pathogen mutation, infection, synchronized extinction result, and host-led rematch all passed.
